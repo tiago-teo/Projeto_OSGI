@@ -4,7 +4,7 @@
 - docker compose build
 
 2. Lançar containers
-*NOTA:* ATENÇÂO AO LANÇAR O CONTAINER MALIGNO. ELE ENVIA 20000 PACOTES POR SEGUNDO OU MAIS. RESULTA EM 20000 LOGS POR SEGUNDO
+**NOTA:** ATENÇÂO AO LANÇAR O CONTAINER MALIGNO. ELE ENVIA 20000 PACOTES POR SEGUNDO OU MAIS. RESULTA EM 20000 LOGS POR SEGUNDO
 
 BENIGNOS:
 - docker compose up -d suricata benigno_tcp_random benigno_udp_random benigno_http_random benigno_dns_random
