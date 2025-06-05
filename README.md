@@ -11,7 +11,7 @@ BENIGNOS:
 
 MALIGNO
 - docker compose up -d maligno_burst
-
+- Parar o maligno: docker compose stop maligno_burst
 
 # Script para correr o algoritmo
 
