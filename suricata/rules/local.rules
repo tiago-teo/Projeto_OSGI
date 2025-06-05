@@ -1,0 +1,8 @@
+alert tcp any any -> 172.28.0.100 any (msg:"TCP packet detected"; sid:100001; rev:1;)
+alert udp any any -> 172.28.0.100 any (msg:"UDP packet detected"; sid:100002; rev:1;)
+#alert icmp any any -> 172.28.0.100 any (msg:"ICMP packet detected"; sid:100003; rev:1;threshold: type both, track by_src, count 60, seconds 60;)
+alert http any any -> 172.28.0.100 any (msg:"HTTP request detected"; sid:100004; rev:1;)
+alert dns any any -> 172.28.0.100 any (msg:"DNS query detected"; sid:100005; rev:1;)
+alert tcp any any -> 172.28.0.100 any (flags:S; msg:"TCP SYN packet detected"; sid:100006; rev:1;)
+alert tcp any any -> 172.28.0.100 any (flags: A; msg:"TCP ACK packet detected"; sid:100007; rev:1;)
+

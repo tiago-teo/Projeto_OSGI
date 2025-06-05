@@ -1,0 +1,90 @@
+version: '3.9'
+
+services:
+  suricata:
+    build: ./suricata
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    networks:
+      dosnet:
+        ipv4_address: 172.28.0.100
+    volumes:
+      - ./logs:/var/log/suricata
+    depends_on:
+      - benigno_http_random
+  benigno_syn_once:
+    build: ./benigno
+    depends_on:
+      - suricata
+    networks:
+      dosnet:
+        ipv4_address: 172.28.0.10
+    command: sh -c "hping3 -S -p 80 -c 4 172.28.0.100"
+
+  benigno_tcp_random:
+    build: ./benigno
+    networks:
+      dosnet:
+        ipv4_address: 172.28.0.11
+    command: >
+      sh -c 'while true; do 
+        hping3 -S -p 80 -c 1 172.28.0.100; 
+        sleep $(awk "BEGIN {print rand()*0.2}"); 
+      done'
+
+  benigno_udp_random:
+    build: ./benigno
+    networks:
+      dosnet:
+        ipv4_address: 172.28.0.12
+    command: >
+      sh -c 'while true; do 
+        hping3 -2 -c 5 172.28.0.100; 
+        sleep $(awk "BEGIN {print rand()*0.05}"); 
+        hping3 -2 -c 5 172.28.0.100; 
+      done'
+
+  benigno_http_random:
+    build: ./benigno
+    networks:
+      dosnet:
+        ipv4_address: 172.28.0.13
+    command: >
+      sh -c 'while true; do 
+        curl -A "Mozilla/5.0" -s http://172.28.0.100 || true; 
+        sleep $(awk "BEGIN {print rand()*4}"); 
+      done'
+
+  benigno_icmp_ping:
+    build: ./benigno
+    networks:
+      dosnet:
+        ipv4_address: 172.28.0.14
+    command: >
+      sh -c 'ping -i 1 172.28.0.100'
+
+  benigno_dns_random:
+    build: ./benigno
+    networks:
+      dosnet:
+        ipv4_address: 172.28.0.15
+    command: >
+      sh -c 'while true; do 
+        dig @172.28.0.100 example.com; 
+      done'
+
+  maligno_burst:
+    build: ./maligno
+    networks:
+      dosnet:
+        ipv4_address: 172.28.0.20
+    command: sh -c "hping3 -S -p 80 -i u50 -c 10000 172.28.0.100"
+
+networks:
+  dosnet:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
+

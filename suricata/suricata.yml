@@ -1,0 +1,4 @@
+default-rule-path: /etc/suricata/rules
+rule-files:
+  - local.rules
+
