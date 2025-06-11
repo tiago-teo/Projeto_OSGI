@@ -2,6 +2,7 @@ import json
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.ensemble import IsolationForest
+import subprocess
 
 def detect_anomalous_ips(log_file='logs/eve.json', contamination=0.1):
     data = []
@@ -86,3 +87,18 @@ def detect_anomalous_ips(log_file='logs/eve.json', contamination=0.1):
     anomalous_ips = agg_df[agg_df['is_anomaly'] == -1]['src_ip'].tolist()
     return anomalous_ips
 
+def block_anomalous_ips(anomalous_ips):
+    for ip in anomalous_ips:
+        try:
+            subprocess.run(['powershell', '-Command', f'New-NetFirewallRule -DisplayName "Block_{ip}" -Direction Inbound -RemoteAddress {ip} -Action Block'], check=True)
+            print(f"IP {ip} bloqueado com sucesso.")
+        except subprocess.CalledProcessError as e:
+            print(f"Erro ao bloquear o IP {ip}: {e}")
+
+if __name__ == "__main__":
+    anomalous_ips = detect_anomalous_ips()
+    if anomalous_ips:
+        print(f"IPs anômalos detectados: {anomalous_ips}")
+        block_anomalous_ips(anomalous_ips)
+    else:
+        print("Nenhum IP anômalo detectado.")
