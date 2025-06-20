@@ -1,13 +1,19 @@
 FROM python:3.11-slim
 
-# Instalar Suricata
+# Instalar Suricata, iptables e bibliotecas Python
 RUN apt-get update && \
-    apt-get install -y suricata && \
+    apt-get install -y suricata iptables && \
+    pip install watchdog pandas scikit-learn && \
     apt-get clean
 
-# Copiar configs se quiseres
+# Copiar configurações do Suricata
 COPY suricata.yaml /etc/suricata/suricata.yaml
 COPY rules/local.rules /etc/suricata/rules/local.rules
 
-CMD sh -c "python3 -m http.server 80 & suricata -i eth0 -c /etc/suricata/suricata.yaml -S /etc/suricata/rules/local.rules"
+# Copiar scripts para o container
+COPY log_watch.py /app/log_watch.py
+COPY alg_dosDetect.py /app/alg_dosDetect.py
+COPY entrypoint.sh /entrypoint.sh
 
+# Usar 'sh' para correr o script (não é preciso chmod +x)
+CMD ["sh", "/entrypoint.sh"]
