@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tráfego em Tempo Real</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Tráfego entre Contentores</h1>
+    <canvas id="trafficChart" width="800" height="400"></canvas>
+
+    <script>
+        const ctx = document.getElementById('trafficChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [...Array(30).keys()],
+                datasets: []
+            },
+            options: {
+                animation: false,
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+
+        async function fetchData() {
+            const response = await fetch('/data');
+            const json = await response.json();
+
+            chart.data.datasets = Object.entries(json).map(([ip, values]) => ({
+                label: ip,
+                data: values,
+                borderWidth: 2,
+                fill: false
+            }));
+
+            chart.update();
+        }
+
+        setInterval(fetchData, 1000);
+    </script>
+</body>
+</html>

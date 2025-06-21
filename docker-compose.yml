@@ -13,6 +13,9 @@ services:
       - ./logs:/var/log/suricata
     depends_on:
       - benigno_http_random
+    ports:
+      - "5000:5000"
+
   benigno_syn_once:
     build: ./benigno
     depends_on:
@@ -87,4 +90,3 @@ networks:
     ipam:
       config:
         - subnet: 172.28.0.0/16
-
