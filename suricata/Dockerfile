@@ -16,6 +16,7 @@ COPY alg_dosDetect.py /app/alg_dosDetect.py
 COPY entrypoint.sh /entrypoint.sh
 COPY monitor.py /app/monitor.py
 COPY templates /app/templates
+COPY static /app/static
 
 # Usar 'sh' para correr o script (não é preciso chmod +x)
 CMD ["sh", "/entrypoint.sh"]
