@@ -2,6 +2,10 @@
 ##  Introdução
 No âmbito da unidade curricular “Operações de Segurança e Gestão de Incidente” foi proposto ao grupo a realização de um projeto focado nos temas lecionados ao longo do semestre. Desta forma, tendo em conta as novas tecnologias, em especial da Inteligência Artificial, o grupo optou por atender às necessidades das empresas quanto a ataques cibernéticos, através da utilização da Inteligência Artificial para a deteção e proteção contra estes mesmos ataques. No entanto, devido à alta variedade de ataques, o grupo decidiu apenas focar-se na deteção e proteção contra ataques de negação de serviço. O seguinte projeto inclui o lançamento de 1 container servidor, 4 containers benignos, 1 container maligno todos utilizando a ferramenta Docker. Além disso no container Servidor, encontra-se um dashboard que faz a monitorização da rede e respetivos IPs.
 
+## Requisitos
+
+1. Docker + Docker Compose
+
 ## 1. Utilização do Projeto
 
 ## 1.1 Construir os containers
