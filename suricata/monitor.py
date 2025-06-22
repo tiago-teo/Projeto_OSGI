@@ -81,8 +81,11 @@ def index():
     # Seleciona os dois IPs com mais tráfego
     top_ips = sorted(data.items(), key=lambda x: sum(x[1]), reverse=True)[:2]
 
-    if len(top_ips) < 2:
-        top_ips.append(("0.0.0.0", [0]*len(top_ips[0][1])))
+    if top_ips:
+        if len(top_ips) < 2:
+            top_ips.append(("0.0.0.0", [0]*len(top_ips[0][1])))
+    else:
+        top_ips.append(("0.0.0.0", [0] * 30))
 
     ip1, ip2 = top_ips[0][0], top_ips[1][0]
     values = top_ips[0][1]
