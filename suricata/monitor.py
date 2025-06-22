@@ -135,13 +135,16 @@ def get_stats():
                 "maligno": maligno
             })
 
-        return jsonify({
+        response = ({
             "total_requests": total_requests,
             "num_unique_ips": num_unique_ips,
             "num_anomalous_ips": num_anomalous_ips,
             "num_blocked_ips": num_blocked_ips,
             "IPdata": IPdata
         })
+        
+
+        return jsonify(response)
     except Exception as e:
         log.exception("Erro ao gerar /stats")
         return jsonify({"error": str(e)}), 500

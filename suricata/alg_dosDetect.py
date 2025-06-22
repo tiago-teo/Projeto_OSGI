@@ -92,6 +92,7 @@ def block_anomalous_ips(anomalous_ips):
     num_blocked_ips = 0
     for ip in anomalous_ips:
         #Verificar se já está bloqueado
+        num_blocked_ips += 1
         result = subprocess.run(['iptables', '-C', 'INPUT', '-s', ip, '-j', 'DROP'],
                                 stdout=subprocess.DEVNULL,
                                 stderr=subprocess.DEVNULL)
@@ -102,12 +103,11 @@ def block_anomalous_ips(anomalous_ips):
 
         try:
             subprocess.run(['iptables', '-A', 'INPUT', '-s', ip, '-j', 'DROP'], check=True)
-            num_blocked_ips += 1
             print(f"[FIREWALL] IP {ip} bloqueado com sucesso.")
         except subprocess.CalledProcessError as e:
             print(f"[ERRO] Ao tentar bloquear o IP {ip}: {e}")
         
-        return num_blocked_ips
+    return num_blocked_ips
 
 if __name__ == "__main__":
     anomalous_ips = detect_anomalous_ips()

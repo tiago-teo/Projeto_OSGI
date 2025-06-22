@@ -314,7 +314,12 @@
 
     // Atualiza labels com base no maior dataset
     const maxLen = Math.max(...sortedIPs.map(entry => entry[1].length));
-    chart.data.labels = Array.from({ length: maxLen }, (_, i) => `${i}s`);
+    chart.data.labels = Array.from({ length: maxLen }, (_, i) => {
+      const secondsAgo = maxLen - i - 1;
+      const now = new Date();
+      now.setSeconds(now.getSeconds() - secondsAgo);
+      return now.toTimeString().slice(0, 8); // HH:MM:SS
+    });
     chart.update();
     }
 
@@ -327,56 +332,70 @@
     }
 
     fetchDataAndUpdateChart(); // inicial
-    setInterval(fetchDataAndUpdateChart, 30000); // 30 segundos
+    setInterval(fetchDataAndUpdateChart, 5000); // 10 segundos
 
-    function updateStats() {
-    fetch('/stats')
-      .then(res => res.json())
-      .then(data => {
-        document.querySelector('#total_requests').innerText = data.total_requests;
-        document.querySelector('#num_unique_ips').innerText = data.num_unique_ips;
-        document.querySelector('#num_anomalous_ips').innerText = data.num_anomalous_ips;
-        document.querySelector('#num_blocked_ips').innerText = data.num_blocked_ips;
+  </script>
+  <script>
+  // Função para atualizar as estatísticas
+  function updateStats() {
+      fetch('/stats')
+        .then(res => {
+          if (!res.ok) throw new Error("Erro no fetch: " + res.status);
+          return res.json();
+        })
+        .then(response => {
+          const el1 = document.querySelector('#total_requests');
+          const el2 = document.querySelector('#num_unique_ips');
+          const el3 = document.querySelector('#num_anomalous_ips');
+          const el4 = document.querySelector('#num_blocked_ips');
 
-        const tableBody = document.querySelector('#ip-table-body');
-        tableBody.innerHTML = '';
-        data.IPdata.forEach(ip => {
-          const row = `
-                  <tr>
-                    <td class="w-30">
-                      <div class="d-flex px-2 py-1 align-items-center">
-                        <div class="ms-4">
-                          <p class="text-xs font-weight-bold mb-0">IP:</p>
-                          <h6 class="text-sm mb-0">${ip.ip}</h6>
-                        </div>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="text-center">
-                        <p class="text-xs font-weight-bold mb-0">Número de pacotes (30seg):</p>
-                        <h6 class="text-sm mb-0">${ip.num_packets_30s}</h6>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="text-center">
-                        <p class="text-xs font-weight-bold mb-0">Total pacotes:</p>
-                        <h6 class="text-sm mb-0">${ip.num_packets}</h6>
-                      </div>
-                    </td>
-                    <td class="align-middle text-sm">
-                      <div class="col text-center">
-                        <p class="text-xs font-weight-bold mb-0">Maligno:</p>
-                        <h6 class="text-sm mb-0">${ip.maligno}</h6>
-                      </div>
-                    </td>
-                  </tr>`;
-          tableBody.innerHTML += row;
-        });
-      });
-  }
+          if (el1) el1.innerText = response.total_requests;
+          if (el2) el2.innerText = response.num_unique_ips;
+          if (el3) el3.innerText = response.num_anomalous_ips;
+          if (el4) el4.innerText = response.num_blocked_ips;
 
-  updateStats();
-  setInterval(updateStats, 10000);
+          const tableBody = document.querySelector('#ip-table-body');
+          if (!tableBody) return;
+
+          tableBody.innerHTML = '';
+          response.IPdata.forEach(ip => {
+            const row = `
+              <tr>
+                <td class="w-30">
+                  <div class="d-flex px-2 py-1 align-items-center">
+                    <div class="ms-4">
+                      <p class="text-xs font-weight-bold mb-0">IP:</p>
+                      <h6 class="text-sm mb-0">${ip.ip}</h6>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="text-center">
+                    <p class="text-xs font-weight-bold mb-0">Número de pacotes (30seg):</p>
+                    <h6 class="text-sm mb-0">${ip.num_packets_30s}</h6>
+                  </div>
+                </td>
+                <td>
+                  <div class="text-center">
+                    <p class="text-xs font-weight-bold mb-0">Total pacotes:</p>
+                    <h6 class="text-sm mb-0">${ip.num_packets}</h6>
+                  </div>
+                </td>
+                <td class="align-middle text-sm">
+                  <div class="col text-center">
+                    <p class="text-xs font-weight-bold mb-0">Maligno:</p>
+                    <h6 class="text-sm mb-0">${ip.maligno}</h6>
+                  </div>
+                </td>
+              </tr>`;
+            tableBody.innerHTML += row;
+          });
+        })
+        .catch(err => console.error('Erro ao buscar /stats:', err));
+    }
+    
+    updateStats(); // chama logo ao carregar a página
+    setInterval(updateStats, 5000); // atualiza a cada 10 segundos
   </script>
   <!-- Github buttons -->
   <script async defer src="https://buttons.github.io/buttons.js"></script>
