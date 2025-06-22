@@ -260,6 +260,8 @@
       },
       scales: {
         y: {
+          type: 'logarithmic',         
+          beginAtZero: false,
           grid: {
             drawBorder: false,
             display: true,
@@ -273,7 +275,15 @@
             font: {
               size: 11,
               family: "Open Sans"
+            },
+            callback: function (value) {          
+              return Number(value.toString());
             }
+          },
+          afterBuildTicks: function (chartObj) {  
+            chartObj.ticks = chartObj.ticks.filter(
+              tick => Number.isInteger(Math.log10(tick))
+            );
           }
         },
         x: {
@@ -295,6 +305,7 @@
     });
 
     function updateChart(data) {
+      
     const sortedIPs = Object.entries(data)
       .sort((a, b) => b[1].reduce((x, y) => x + y, 0) - a[1].reduce((x, y) => x + y, 0));
 
@@ -302,7 +313,7 @@
       const colorIndex = index % gradients.length;
       return {
         label: ip,
-        data: values,
+        data: values.map(v => Math.max(v, 0.001)),
         tension: 0.4,
         borderColor: baseColors[colorIndex],
         backgroundColor: gradients[colorIndex],
