@@ -18,8 +18,8 @@ log = logging.getLogger(__name__)
 app = Flask(__name__, template_folder='templates')
 data = defaultdict(list)  # {ip: [count1, count2, ...]} 
 total_counts = defaultdict(int)     # Contagem acumulada total
-ip_regex = re.compile(r'IP (\d+\.\d+\.\d+\.\d+)\.\d+ >')
-
+#ip_regex = re.compile(r'IP (\d+\.\d+\.\d+\.\d+)\.\d+ >')
+ip_regex = re.compile(r'IP (\d+\.\d+\.\d+\.\d+)\.(\d+) > (\d+\.\d+\.\d+\.\d+)\.(\d+):')
 
 # Captura pacotes em tempo real 
 def capture_packets(interface='eth0'):
@@ -70,7 +70,7 @@ def index():
     for ip, counts in data.items():
         total = total_counts[ip]
         total_30s = sum(counts)  # Total de pacotes para este IP nos últimos 30 segundos
-        maligno = "Sim" if ip in anomalous_ips else "Não"
+        maligno = "Sim" if ip in anomalous_ips else "Não" if ip == '172.28.0.1' else "Não"
         IPdata.append({
             "ip": ip,
             "num_packets": total,
