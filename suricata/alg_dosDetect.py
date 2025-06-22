@@ -5,7 +5,7 @@ from sklearn.ensemble import IsolationForest
 import subprocess
 import socket
 
-def detect_anomalous_ips(log_file='/var/log/suricata/eve.json', contamination=0.03, min_packets=100):
+def detect_anomalous_ips(log_file='/var/log/suricata/eve.json', contamination=0.03, min_packets=500):
     data = []
 
     # Leitura do arquivo de logs
@@ -80,7 +80,7 @@ def detect_anomalous_ips(log_file='/var/log/suricata/eve.json', contamination=0.
     clf.fit(X_scaled)
     agg_df['anomaly_score'] = clf.decision_function(X_scaled)
     agg_df['is_anomaly'] = clf.predict(X_scaled)
-
+    agg_df.loc[agg_df['src_ip'] == '172.28.0.1', 'is_anomaly'] = 1
     # Filtrar IPs anômalos com pacotes suficientes
     anomalous_ips = agg_df[
         (agg_df['is_anomaly'] == -1) &
@@ -89,31 +89,10 @@ def detect_anomalous_ips(log_file='/var/log/suricata/eve.json', contamination=0.
 
     return anomalous_ips
 
-def get_own_ip():
-    """Tenta descobrir o IP principal da máquina local."""
-    try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        # Não precisa estar acessível, só precisa ser roteável
-        s.connect(('8.8.8.8', 80))
-        ip = s.getsockname()[0]
-        s.close()
-        return ip
-    except Exception as e:
-        print(f"[ERRO] Não foi possível obter o IP local: {e}")
-        return None
-
 def block_anomalous_ips(anomalous_ips):
     num_blocked_ips = 0
-    own_ip = get_own_ip()
-    gateway_ip = '172.28.0.1'
-    if own_ip:
-        print(f"[INFO] IP da máquina local: {own_ip}")
-
     for ip in anomalous_ips:
 
-        if ip == own_ip or ip == gateway_ip:
-            print(f"[FIREWALL] Ignorado: {ip} é o IP da própria máquina.")
-            continue
         #Verificar se já está bloqueado
         num_blocked_ips += 1
         result = subprocess.run(['iptables', '-C', 'INPUT', '-s', ip, '-j', 'DROP'],

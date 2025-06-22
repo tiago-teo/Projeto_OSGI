@@ -70,7 +70,7 @@ def index():
     for ip, counts in data.items():
         total = total_counts[ip]
         total_30s = sum(counts)  # Total de pacotes para este IP nos últimos 30 segundos
-        maligno = "Sim" if ip in anomalous_ips else "Não" if ip == '172.28.0.1' else "Não"
+        maligno = "Sim" if ip in anomalous_ips else "Não"
         IPdata.append({
             "ip": ip,
             "num_packets": total,
