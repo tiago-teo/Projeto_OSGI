@@ -4,7 +4,8 @@ No âmbito da unidade curricular “Operações de Segurança e Gestão de Incid
 
 ## Requisitos
 
-1. Docker + Docker Compose
+Docker + Docker Compose
+
 
 ## 1. Utilização do Projeto
 
