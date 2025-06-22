@@ -7,7 +7,7 @@
 - **NOTA:** ATENÇÂO AO LANÇAR O CONTAINER MALIGNO. ELE ENVIA 20000 PACOTES POR SEGUNDO OU MAIS. RESULTA EM 20000 LOGS POR SEGUNDO
 
 ### 1.2.1 BENIGNOS:
-- docker compose up -d suricata benigno_1 benigno_2 benigno_3 benigno_4
+- docker compose up -d servidor benigno_1 benigno_2 benigno_3 benigno_4
 
 ### 1.2.2 MALIGNO
 - docker compose up -d maligno_burst
