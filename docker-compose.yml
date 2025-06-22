@@ -12,20 +12,11 @@ services:
     volumes:
       - ./logs:/var/log/suricata
     depends_on:
-      - benigno_http_random
+      - benigno_3
     ports:
       - "5000:5000"
 
-  benigno_syn_once:
-    build: ./benigno
-    depends_on:
-      - suricata
-    networks:
-      dosnet:
-        ipv4_address: 172.28.0.10
-    command: sh -c "hping3 -S -p 80 -c 4 172.28.0.100"
-
-  benigno_tcp_random:
+  benigno_1:
     build: ./benigno
     networks:
       dosnet:
@@ -36,7 +27,7 @@ services:
         sleep $(awk "BEGIN {print rand()*0.2}"); 
       done'
 
-  benigno_udp_random:
+  benigno_2:
     build: ./benigno
     networks:
       dosnet:
@@ -48,7 +39,7 @@ services:
         hping3 -2 -c 5 172.28.0.100; 
       done'
 
-  benigno_http_random:
+  benigno_3:
     build: ./benigno
     networks:
       dosnet:
@@ -59,15 +50,7 @@ services:
         sleep $(awk "BEGIN {print rand()*4}"); 
       done'
 
-  benigno_icmp_ping:
-    build: ./benigno
-    networks:
-      dosnet:
-        ipv4_address: 172.28.0.14
-    command: >
-      sh -c 'ping -i 1 172.28.0.100'
-
-  benigno_dns_random:
+  benigno_4:
     build: ./benigno
     networks:
       dosnet:
