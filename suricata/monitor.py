@@ -59,7 +59,6 @@ def index():
     num_anomalous_ips = len(anomalous_ips)
     num_blocked_ips = block_anomalous_ips(anomalous_ips)
     # Conta o número total de pedidos (soma de todos os pacotes capturados)
-    #total_requests = sum(sum(counts) for counts in data.values())
     total_requests = sum(total_counts.values())   
 
     # Conta o número de IPs diferentes que enviaram pacotes
@@ -68,9 +67,9 @@ def index():
 
     IPdata = []
     for ip, counts in data.items():
-        total = total_counts[ip]
+        total = total_counts[ip] # Total de pacotes para este IP
         total_30s = sum(counts)  # Total de pacotes para este IP nos últimos 30 segundos
-        maligno = "Sim" if ip in anomalous_ips else "Não"
+        maligno = "Sim" if ip in anomalous_ips else "Não" # Verifica se o IP é considerado maligno
         IPdata.append({
             "ip": ip,
             "num_packets": total,
@@ -78,29 +77,10 @@ def index():
             "maligno": maligno
         })
 
-    # Seleciona os dois IPs com mais tráfego
-    top_ips = sorted(data.items(), key=lambda x: sum(x[1]), reverse=True)[:2]
+    
 
-    if top_ips:
-        if len(top_ips) < 2:
-            top_ips.append(("0.0.0.0", [0]*len(top_ips[0][1])))
-    else:
-        top_ips.append(("0.0.0.0", [0] * 30))
-
-    ip1, ip2 = top_ips[0][0], top_ips[1][0]
-    values = top_ips[0][1]
-    values2 = top_ips[1][1]
-    labels = [f"{i} seg" for i in range(len(values))]
-
-    ip1_label = f"{ip1} "
-    ip2_label = f"{ip2} "
     return render_template(
         'dashboard.html',
-        labels=labels,
-        values=values,
-        values2=values2,
-        ip1_label=ip1_label,
-        ip2_label=ip2_label,
         num_anomalous_ips=num_anomalous_ips,
         num_blocked_ips=num_blocked_ips,
         total_requests=total_requests,
