@@ -8,7 +8,7 @@ No âmbito da unidade curricular “Operações de Segurança e Gestão de Incid
 - docker compose build
 
 ## 1.2 Lançar containers
-- **NOTA:** ATENÇÂO AO LANÇAR O CONTAINER MALIGNO. ELE ENVIA 20000 PACOTES POR SEGUNDO OU MAIS. RESULTA EM 20000 LOGS POR SEGUNDO
+- **NOTA:** ATENÇÂO AO LANÇAR O CONTAINER MALIGNO. ELE ENVIA 20000 PACOTES POR SEGUNDO. RESULTA EM 20000 LOGS POR SEGUNDO!
 
 ### 1.2.1 BENIGNOS:
 - docker compose up -d servidor benigno_1 benigno_2 benigno_3 benigno_4
